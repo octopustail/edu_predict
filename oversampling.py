@@ -152,7 +152,10 @@ math_df["cal1_f"] = math_df["cal1_f"].apply(convert_float)
 # feature-label_df
 # 连接
 
-#
+# x = np.intersect1d(math_df["index"],meal_ae_df[0])
+# print("&&&&&&&&&&&&&&&&&&&&&x",len(x))
+
+
 res = total_df.join(library_count_feature_df.set_index("index"), on="sid", how="outer",sort=True,rsuffix="_lib")
 res = res.join(hotwater_count_feature_df.set_index("index"),on="sid", how="left", sort=True,rsuffix="_hw")
 res = res.join(shower_ae_df.set_index(0), on="sid", how="left", sort=True,rsuffix="_shwr")
@@ -161,33 +164,18 @@ res = res.join(math_df.set_index("index"), on="sid", sort=True, how="left", rsuf
 
 # # 清理掉 NAN 数据
 res = res.dropna(axis=0,how='any')
-res.columns = ['1_score','2_score','3_score','4_score','5_score','6_score','sid','label','1_lib','2_lib','3_lib','4_lib','5_lib','6_lib','7_lib','8_lib','9_lib','10_lib','11_lib','12_lib','1_hw','2_hw','3_hw','4_hw','5_hw','6_hw','7_hw','8_hw','9_hw','10_hw','11_hw','12_hw','1_shwr','2_shwr','3_shwr','4_shwr','5_shwr','6_shwr','cal1_f']
+all_label = ['1_score','2_score','3_score','4_score','5_score','6_score','sid','label','1_lib','2_lib','3_lib','4_lib','5_lib','6_lib','7_lib','8_lib','9_lib','10_lib','11_lib','12_lib','1_hw','2_hw','3_hw','4_hw','5_hw','6_hw','7_hw','8_hw','9_hw','10_hw','11_hw','12_hw','1_shwr','2_shwr','3_shwr','4_shwr','5_shwr','6_shwr','cal1_f']
+res.columns = all_label
 print("res*********************\n", res)
 print("组装完成...")
-# 真实熵
-# 数学成绩
-# 前一学期的成绩
 
-# # 打印res的所有columns名称
-# # print(res.columns.to_list())
-# # 总成绩 = ['2009-2010_1', '2009-2010_2', '2010-2011_1', '2010-2011_2', '2011-2012_1', '2011-2012_2']
-# score = ['2009-2010_1', '2009-2010_2', '2010-2011_1', '2010-2011_2', '2011-2012_1', '2011-2012_2']
-# # label = "label"
-# label = ["label"]
-# # 图书馆刷卡次数按月统计 = ['2009-09', '2009-10', '2009-11', '2009-12', '2010-01', '2010-02']
-# lib_count = ['2009-09', '2009-10', '2009-11', '2009-12', '2010-01', '2010-02']
-# # 教学楼打热水次数按月统计 = ['2009-09_hw', '2009-10_hw', '2009-11_hw', '2009-12_hw', '2010-01_hw', '2010-02_hw']
-# hotwater_count= ['2009-09_hw', '2009-10_hw', '2009-11_hw', '2009-12_hw', '2010-01_hw', '2010-02_hw']
-# # 洗澡的真实熵 = ['1', '2', '3', '4', '5', '6']
-# shower_ae = ['1', '2', '3', '4', '5', '6']
-# # 吃饭的真实熵 = ['1_ml', '2_ml', '3_ml', '4_ml', '5_ml', '6_ml']
-# meal_ae = ['1_ml', '2_ml', '3_ml', '4_ml', '5_ml', '6_ml']
-#
-feature = res.drop(["label","sid",'1_score','2_score','3_score','4_score','5_score','6_score','2_shwr','3_shwr','4_shwr','5_shwr','6_shwr'],axis = 1)
+
+drop_label = ["label","sid",'1_score','2_score','3_score','4_score','5_score','6_score','2_shwr','3_shwr','4_shwr','5_shwr','6_shwr']
+feature = res.drop(drop_label,axis = 1)
 print("装载 feature label...")
 label = res["label"]
 
-
+print("本次预测使用的标签******************: ", np.setdiff1d(all_label,drop_label))
 # train  = res[:]
 # test = res[3001:]
 # _y_train = train['label']  # training label
@@ -313,8 +301,10 @@ lm = LogisticRegression(penalty='l2', C=0.001) # logestic model construction
 lm.fit(transformed_training_matrix, np.ravel(y_train))  # fitting the data
 
 # y_pred_label = lm.predict(transformed_training_matrix )  # For training data
+# 逻辑回归的预测标签
 y_pred_label = lm.predict(transformed_testing_matrix)    # For testing data
 # y_pred_est = lm.predict_proba(transformed_training_matrix)   # Give the probabilty on each label
+# 逻辑回归的预测标签的概率
 y_pred_est = lm.predict_proba(transformed_testing_matrix)
 # Give the probabilty on each label
 
@@ -369,6 +359,7 @@ thresholds = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
 plt.figure(figsize=(12, 8))
 j = 1
 for i in thresholds:
+    print("y_pred_est",y_pred_est)
     y_test_predictions_high_recall = y_pred_est[:, 1] > i
     plt.subplot(3, 3, j)
     j += 1
