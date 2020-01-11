@@ -17,7 +17,7 @@ STAN = datetime.datetime.strptime("00:00:00", "%H:%M:%S")
 TIME_PIECE = 10 * 60
 
 print("load data...")
-with open('data/record_sequence_09.json', 'r') as f:
+with open('data/record_sequence_3_10.json', 'r') as f:
     loaded_obj = json.load(f)
 
 
@@ -71,9 +71,9 @@ def cal_timepiece(l):
 
 sems = ["sems1","sems2","sems3","sems4","sems5","sems6"]
 food_df = pd.DataFrame(columns=sems)
-# shower_df = pd.DataFrame(columns= sems)
-# hotwater_df = pd.DataFrame(columns= sems)
-# library_df = pd.DataFrame(columns= sems)
+shower_df = pd.DataFrame(columns= sems)
+hotwater_df = pd.DataFrame(columns= sems)
+library_df = pd.DataFrame(columns= sems)
 
 print("装载DF")
 for i, k in loaded_obj.items():
@@ -82,44 +82,39 @@ for i, k in loaded_obj.items():
     h = k["hotwater"]
     l = k["library"]
     food_df.loc[i] = [f["sems1"],f["sems2"],f["sems3"],f["sems4"],f["sems5"],f["sems6"]]
-    # shower_df.loc[i] = [s["sems1"],s["sems2"],s["sems3"],s["sems4"],s["sems5"],s["sems6"]]
-    # hotwater_df.loc[i] = [h["sems1"],h["sems2"],h["sems3"],h["sems4"],h["sems5"],h["sems6"]]
-    # library_df.loc[i] = [l["sems1"],l["sems2"],l["sems3"],l["sems4"],l["sems5"],l["sems6"]]
+    shower_df.loc[i] = [s["sems1"],s["sems2"],s["sems3"],s["sems4"],s["sems5"],s["sems6"]]
+    hotwater_df.loc[i] = [h["sems1"],h["sems2"],h["sems3"],h["sems4"],h["sems5"],h["sems6"]]
+    library_df.loc[i] = [l["sems1"],l["sems2"],l["sems3"],l["sems4"],l["sems5"],l["sems6"]]
 
 
 # 刷卡次数统计
 food_df_count  = food_df[sems].applymap(lambda x: len(x))
-# shower_df_count  = shower_df[sems].applymap(lambda x: len(x))
-# hotwater_df_count  = hotwater_df[sems].applymap(lambda x: len(x))
-# library_df_count  = library_df[sems].applymap(lambda x: len(x))
+shower_df_count  = shower_df[sems].applymap(lambda x: len(x))
+hotwater_df_count  = hotwater_df[sems].applymap(lambda x: len(x))
+library_df_count  = library_df[sems].applymap(lambda x: len(x))
 
 # mapapply 计算每个学期的真实熵
 food_df_ae = food_df[sems].applymap(cal_timepiece)
-# shower_df_ae  = shower_df[sems].applymap(cal_timepiece)
-# hotwater_df_ae  = hotwater_df[sems].applymap(cal_timepiece)
-# library_df_ae  = library_df[sems].applymap(cal_timepiece)
+shower_df_ae  = shower_df[sems].applymap(cal_timepiece)
+hotwater_df_ae  = hotwater_df[sems].applymap(cal_timepiece)
+library_df_ae  = library_df[sems].applymap(cal_timepiece)
 
-food_count_ae = food_df_count.join(food_df_ae,rsuffix="ae",lsuffix="count",how="left")
+food_df_count = food_df_count.join(food_df_ae,rsuffix="ae",lsuffix="count",how="left")
+shower_df_count = shower_df_count.join(shower_df_ae,rsuffix="ae",lsuffix="count",how="left")
+hotwater_df_count = hotwater_df_count.join(hotwater_df_ae,rsuffix="ae",lsuffix="count",how="left")
+library_df_count = library_df_count.join(library_df_ae,rsuffix="ae",lsuffix="count",how="left")
 
-print("food_count_ae\n",food_count_ae)
+# print("food_count_ae\n",food_count_ae)
 
+filename = ['food','shower','hotwater','library']
+dfs = [food_df_count,shower_df_count, hotwater_df_count, library_df_count]
+grade = "10"
 
-print('start1....')
-print(food_count_ae)
-food_count_ae.to_pickle('data/food_count_ae_09.pkl')
-print('finish1....')
-#
-# print('start2....')
-# print(hotwater_df)
-# hotwater_df.to_pickle('data/new_hotwater_count_09.pkl')
-# print('finish2....')
-# #
-# print('start3....')
-# print(library_df)
-# library_df.to_pickle('data/new_library_count_09.pkl')
-# print('finish3....')
-# #
-# print('start4....')
-# print(food_df)
-# food_df.to_pickle('data/new_food_count_09.pkl')
-# print('finish4....')
+for i in range(4):
+    file = './data/count_ae_'+filename[i]+ '_'+grade+'.pkl'
+    df = dfs[i]
+    print('start2....')
+    print(df)
+    df.to_pickle(file)
+    print('finish2....')
+
