@@ -11,7 +11,10 @@ import time
 import json
 
 # 校历时间转化成datetime格式，方便后续将记录划归到学期
-l = ['2009-08-31','2010-03-01','2010-08-31','2011-02-21','2011-08-29','2012-02-20','2012-08-31']
+#  09年使用
+# l = ['2009-08-31','2010-03-01','2010-08-31','2011-02-21','2011-08-29','2012-02-20','2012-08-31']
+# 10年使用
+l = ['2010-08-31','2011-02-21','2011-08-29','2012-02-20','2012-08-31','2013-02-28','2013-08-31',]
 # schoolCalender = map(lambda x: datetime.datetime.strptime(x,'%Y-%m-%d').date(), l)
 # 校历转化为时间戳格式
 li = []
@@ -31,9 +34,9 @@ def find_semester(date):
     return res
 
 
-#读取数据
-print("++++++++++++++ Loading Data ++++++++++++++++")
-data = pd.read_csv("/Volumes/Mac/eduData_octo/record_ae_lib/data/comsumption_09.csv", header=None, sep=',')
+# #读取数据
+# print("++++++++++++++ Loading Data ++++++++++++++++")
+data = pd.read_csv("/Users/vis/Desktop/comsumption_10.csv", header=None, sep=',')
 
 print("-------------- Dropping Data --------------")
 # column：0   1    2     3
@@ -49,7 +52,7 @@ length = record_df.shape[0]
 for i, r in record_df.iterrows():
     # 如果stu_sequence_dict中还没有添加该条学生的信息，则在stu_sequence_dict中为该学生初始化
     if r["sid"] not in stu_sequence_dict.keys():
-        {"sems1":[], "sems2":[], "sems3":[], "sems4":[], "sems5":[], "sems6":[]}
+        {"sems1":[], "sems2":[], "sems3":[], "sems4":[], "sems5":[], "sems6":[],"sems7":[]}
         stu_sequence_dict[r["sid"]] = {}
         stu_sequence_dict[r["sid"]]["food"] = {"sems1":[], "sems2":[], "sems3":[], "sems4":[], "sems5":[], "sems6":[],"sems7":[]}
         stu_sequence_dict[r["sid"]]["shower"] = {"sems1":[], "sems2":[], "sems3":[], "sems4":[], "sems5":[], "sems6":[],"sems7":[]}
@@ -73,51 +76,7 @@ print(stu_sequence_dict)
 # 将数据保存在json中
 print('start1....')
 json_str = json.dumps(stu_sequence_dict, indent=4)
-with open('data/record_sequence_09.json', 'w') as json_file:
+with open('/Users/vis/Desktop/eduData_octo/record_sequence_3_10.json', 'w') as json_file:
     json_file.write(json_str)
 print('finish1....')
 
-# print('start2....')
-# print("library_count_df\n",library_count_df)
-# library_count_df.to_pickle('data/library_count_df_10.pkl')
-# print('finish2....')
-#
-# print('start3....')
-# print("shower_count_df\n",shower_count_df)
-# shower_count_df.to_pickle('data/shower_count_df_10.pkl')
-# print('finish3....')
-#
-#
-# print('start4....')
-# print("hotwater_count_df\n",hotwater_count_df)
-# hotwater_count_df.to_pickle('data/hotwater_count_df_10.pkl')
-# print('finish4....')
-#
-#
-
-# def contains(small, big):
-#     for i in range(len(big)-len(small)+1):
-#         if big[i:i+len(small)] == small:
-#             return True
-#     return False
-# def actual_entropy(l):
-#     n = len(l)
-#     sequence = [l[0]]
-#     sum_gamma = 0
-#
-#     for i in range(1, n):
-#         for j in range(i+1, n+1):
-#             s = l[i:j]
-#             if contains(s, sequence) != True:
-#                 sum_gamma += len(s)
-#                 sequence.append(l[i])
-#                 break
-#
-#     ae = 1 / (sum_gamma / n ) * math.log(n)
-#     return ae
-#
-# def getPredictability(N, S):
-#     f = lambda x: (((1-x)/(N-1)) **(1-x))* x**x - 2**(-S)
-#     root = mpmath.findroot(f, 1)
-#     return float(root.real)
-# # getPredictability(N, S)
