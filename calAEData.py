@@ -76,7 +76,7 @@ print(stu_sequence_dict)
 # 将数据保存在json中
 print('start1....')
 json_str = json.dumps(stu_sequence_dict, indent=4)
-with open('/Users/vis/Desktop/eduData_octo/record_sequence_3_10.json', 'w') as json_file:
+with open('/Users/vis/Desktop/eduData_octo/record_sequence_10.json', 'w') as json_file:
     json_file.write(json_str)
 print('finish1....')
 
