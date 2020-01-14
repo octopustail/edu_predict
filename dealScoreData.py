@@ -6,7 +6,7 @@ import numpy as np
 import json
 import pickle
 
-# 读取文件
+#读取文件
 print("读取文件ing")
 # total = json.load(open('/Volumes/Mac/eduData_octo/score/Score_with_courseType/score_wa_total_10.json','r'))
 
