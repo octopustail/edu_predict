@@ -17,7 +17,7 @@ STAN = datetime.datetime.strptime("00:00:00", "%H:%M:%S")
 TIME_PIECE = 10 * 60
 
 print("load data...")
-with open('data/record_sequence_3_10.json', 'r') as f:
+with open('data/record_sequence/record_sequence_10.json', 'r') as f:
     loaded_obj = json.load(f)
 
 
