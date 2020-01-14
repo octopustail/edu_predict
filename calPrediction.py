@@ -1,3 +1,12 @@
+# This Python file uses the following encoding: utf-8
+'''
+@Author: your name
+@Date: 2020-01-11 16:24:25
+@LastEditTime : 2020-01-12 20:23:18
+@LastEditors  : Please set LastEditors
+@Description: In User Settings Edit
+@FilePath: /test/calPrediction.py
+'''
 # 计算真实熵
 
 
@@ -33,10 +42,11 @@ def getPredictability(N, S):
 
 
 filename = ['food','shower','hotwater','library']
+# filename = ['food']
 grade = "10"
 
 for i in filename:
-    file = './data/count_ae_'+i +'_' + grade+'.pkl'
+    file = './data/prediction_ae_countList/count_ae_'+i +'_' + grade+'.pkl'
     df = pd.read_pickle(file)
 
     df = df.dropna(axis=0, how="any")
@@ -47,15 +57,15 @@ for i in filename:
     # df = df.ix[~(df==0).all(axis=1), :]  # 删了它
     # 2906303015
     for j in range(1,7):
-        df["sems"+str(i)+"pred"] = df.apply(lambda row: getPredictability(row['sems'+str(j)+'count'],row['sems'+str(j)+'ae']),axis=1)
+        df["sems"+str(j)+"pred"] = df.apply(lambda row: getPredictability(row['sems'+str(j)+'count'],row['sems'+str(j)+'ae']),axis=1)
     df = df.fillna(method="bfill",axis=1)
     df = df.fillna(method="ffill",axis=1)
     df = df.dropna(axis=0, how="any")
 
-
+    print(df)
     print('start '+i+ '....')
     print(df)
-    outfile = 'data/prediction_'+ i + grade+'.pkl'
+    outfile = 'data/prediction_ae_countList/prediction_'+ i + grade+'.pkl'
     df.to_pickle(outfile)
     print('finish '+i+'....')
 
